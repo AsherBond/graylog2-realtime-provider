@@ -12,8 +12,9 @@ begin
     gem.homepage = "http://github.com/Graylog2/graylog2-realtime-provider"
     gem.authors = "Lennart Koopmann"
     gem.add_dependency "json"
-    gem.add_dependency "mongo"
-    gem.add_dependency "em-websocket"
+    gem.add_dependency "mongo", '~> 1.5.2'
+    gem.add_dependency "em-websocket", '~> 0.3.6'
+    gem.add_dependency "bson_ext", '~> 1.5.2'
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
