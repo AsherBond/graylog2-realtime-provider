@@ -5,24 +5,19 @@ $:.unshift File.expand_path("../../lib", __FILE__)
 require 'optparse'
 require 'graylog2-realtime-provider'
 
-options = {}
+cli_options = {}
 optparse = OptionParser.new do |opts|
 
   opts.banner = "Usage: graylog2-realtime-provider --listen 0.0.0.0 --port 9001"
   
-  options[:debug] = false
+  cli_options[:debug] = false
   opts.on( '-d', '--debug', "Display debug information.") do
-    options[:debug] = true
+    cli_options[:debug] = true
   end
 
-  options[:listen] = ""
-  opts.on( '-l', '--listen LISTEN_ADDR', 'The address to listen on.') do |l|
-    options[:listen] = l
-  end
-  
-  options[:port] = ""
-  opts.on( '-p', '--port PORT', 'The port to listen on.') do |p|
-    options[:port] = p
+  cli_options[:config] = ""
+  opts.on( '-c', '--config CONFIGFILE', 'The configuration file to use.') do |c|
+    cli_options[:config] = c
   end
 
   opts.on( '-h', '--help', 'Display this screen' ) do
@@ -34,8 +29,11 @@ end
 
 optparse.parse!
 
-abort("No listen address set.") if options[:listen].nil? or options[:listen].size == 0
-abort("None or invalid listen port set.") if options[:port].nil? or options[:port].to_i <= 0
+abort("No configuration file given.") if cli_options[:config].nil? or cli_options[:config].size == 0
 
-server = WebsocketServer.new(options[:listen], options[:port], :debug => options[:debug])
+config = Configuration.parse(cli_options[:config])
+
+puts config.inspect
+
+server = WebsocketServer.new(config["listen_address"], config["port"], :debug => cli_options[:debug])
 server.start
